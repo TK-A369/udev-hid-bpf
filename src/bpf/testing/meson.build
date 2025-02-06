@@ -14,6 +14,7 @@ tracing_sources = [
 # struct_ops (kernel v6.11+)
 sources = [
     '0010-XPPen__ACK05.bpf.c',
+    '0030-TurtleBeach__VelocityOneFlight.bpf.c'
 ]
 
 foreach bpf: tracing_sources
