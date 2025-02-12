@@ -119,7 +119,13 @@ SEC(HID_BPF_RDESC_FIXUP)
 int BPF_PROG(ifnore_button_fix_rdesc, struct hid_bpf_ctx *hctx) {
   bpf_printk("%s: fixing an rdesc for yoke", __func__);
 
-  /*hctx->bpf_rdesc;*/
+  __u8 *data = hid_bpf_get_data(hctx, 0, HID_MAX_DESCRIPTOR_SIZE);
 
-  return 0;
+  if (!data) {
+    return 0;
+  }
+
+  __builtin_memcpy(data, custom_report_descriptor_1, sizeof(custom_report_descriptor_1);
+
+  return sizeof(custom_report_descriptor_1);
 }
