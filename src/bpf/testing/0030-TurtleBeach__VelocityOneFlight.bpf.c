@@ -19,43 +19,49 @@ static const __u8 custom_report_descriptor_1[] = {
   CollectionApplication(
     ReportId(0x01)
 
-    // 20 buttons
-    LogicalMinimum_i8(0)
-    LogicalMaximum_i8(1)
-    PhysicalMinimum_i8(0)
-    PhysicalMaximum_i8(1)
-    ReportSize(1)
-    ReportCount(20)
-    UsagePage_Button
-    UsageMinimum_i8(1)
-    UsageMaximum_i8(20)
-    Input(Var|Abs)
+    CollectionPhysical(
+      // 20 buttons
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i8(1)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i8(1)
+      ReportSize(1)
+      ReportCount(20)
+      UsagePage_Button
+      UsageMinimum_i8(1)
+      UsageMaximum_i8(20)
+      Input(Var|Abs)
+    )
 
     // Padding
     ReportSize(1)
     ReportCount(20)
     Input(Const|Arr|Abs)
 
-    // Left PoV hat
-    ReportSize(1)
-    ReportCount(4)
-    UsagePage_Button
-    UsageMinimum_i8(1)
-    UsageMaximum_i8(4)
-    Input(Var|Abs)
+    CollectionPhysical(
+      // Left PoV hat
+      ReportSize(1)
+      ReportCount(4)
+      UsagePage_Button
+      UsageMinimum_i8(21)
+      UsageMaximum_i8(24)
+      Input(Var|Abs)
+    )
 
     // Padding
     ReportSize(1)
     ReportCount(4)
     Input(Const|Arr|Abs)
 
-    // Right PoV hat
-    ReportSize(1)
-    ReportCount(4)
-    UsagePage_Button
-    UsageMinimum_i8(1)
-    UsageMaximum_i8(4)
-    Input(Var|Abs)
+    CollectionPhysical(
+      // Right PoV hat
+      ReportSize(1)
+      ReportCount(4)
+      UsagePage_Button
+      UsageMinimum_i8(25)
+      UsageMaximum_i8(28)
+      Input(Var|Abs)
+    )
 
     // Padding
     ReportSize(1)
@@ -111,12 +117,14 @@ static const __u8 custom_report_descriptor_1[] = {
       ReportCount(1)
       Input(Const|Arr|Abs)
     )
+
+    FixedSizeVendorReport(64)
   )
 };
 // clang-format on
 
 SEC(HID_BPF_RDESC_FIXUP)
-int BPF_PROG(ifnore_button_fix_rdesc, struct hid_bpf_ctx *hctx) {
+int BPF_PROG(velocityone_flight_fix_rdesc, struct hid_bpf_ctx *hctx) {
   bpf_printk("%s: fixing an rdesc for yoke", __func__);
 
   __u8 *data = hid_bpf_get_data(hctx, 0, HID_MAX_DESCRIPTOR_SIZE);
@@ -125,7 +133,13 @@ int BPF_PROG(ifnore_button_fix_rdesc, struct hid_bpf_ctx *hctx) {
     return 0;
   }
 
-  __builtin_memcpy(data, custom_report_descriptor_1, sizeof(custom_report_descriptor_1);
+  __builtin_memcpy(data, custom_report_descriptor_1,
+                   sizeof(custom_report_descriptor_1));
 
   return sizeof(custom_report_descriptor_1);
 }
+
+HID_BPF_OPS(velocityone_flight) = {
+    .hid_rdesc_fixup = (void *)velocityone_flight_fix_rdesc};
+
+char _license[] SEC("license") = "GPL";
