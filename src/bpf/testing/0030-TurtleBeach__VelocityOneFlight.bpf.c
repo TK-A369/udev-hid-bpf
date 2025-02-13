@@ -121,6 +121,130 @@ static const __u8 custom_report_descriptor_1[] = {
     FixedSizeVendorReport(64)
   )
 };
+
+static const __u8 custom_report_descriptor_2[] = {
+  UsagePage_GenericDesktop
+  Usage_GD_Gamepad
+  CollectionApplication(
+    ReportId(0x02)
+
+    CollectionPhysical(
+      // 10 buttons
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i8(1)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i8(1)
+      ReportSize(1)
+      ReportCount(10)
+      UsagePage_Button
+      UsageMinimum_i8(1)
+      UsageMaximum_i8(10)
+      Input(Var|Abs)
+    )
+
+    // Padding
+    ReportSize(1)
+    ReportCount(6)
+    Input(Const|Arr|Abs)
+
+    CollectionPhysical(
+      // Throttle (black)
+      UsagePage_GenericDesktop
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(255)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(255)
+      Usage_GD_X
+      ReportSize(8)
+      ReportCount(1)
+      Input(Var|Abs)
+
+      // Propeller angle (blue)
+      UsagePage_GenericDesktop
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(255)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(255)
+      Usage_GD_Y
+      ReportSize(8)
+      ReportCount(1)
+      Input(Var|Abs)
+
+      // Fuel mix (red)
+      UsagePage_GenericDesktop
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(255)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(255)
+      Usage_GD_Z
+      ReportSize(8)
+      ReportCount(1)
+      Input(Var|Abs)
+
+      // Throttle 2
+      UsagePage_GenericDesktop
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(255)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(255)
+      Usage_GD_Ry
+      ReportSize(8)
+      ReportCount(1)
+      Input(Var|Abs)
+
+      // Throttle 3
+      UsagePage_GenericDesktop
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(255)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(255)
+      Usage_GD_Rz
+      ReportSize(8)
+      ReportCount(1)
+      Input(Var|Abs)
+
+      // Throttle 4
+      UsagePage_GenericDesktop
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(255)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(255)
+      Usage_GD_Slider
+      ReportSize(8)
+      ReportCount(1)
+      Input(Var|Abs)
+
+      // Pitch trim
+      UsagePage_GenericDesktop
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(1023)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(1023)
+      Usage_GD_Wheel
+      ReportSize(10)
+      ReportCount(1)
+      Input(Var|Abs)
+
+      // Padding
+      ReportSize(6)
+      ReportCount(1)
+      Input(Const|Arr|Abs)
+
+      // Throttle 1
+      UsagePage_GenericDesktop
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(255)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(255)
+      Usage_GD_Rx
+      ReportSize(8)
+      ReportCount(1)
+      Input(Var|Abs)
+    )
+
+    FixedSizeVendorReport(11)
+  )
+};
 // clang-format on
 
 SEC(HID_BPF_RDESC_FIXUP)
@@ -133,10 +257,18 @@ int BPF_PROG(velocityone_flight_fix_rdesc, struct hid_bpf_ctx *hctx) {
     return 0;
   }
 
-  __builtin_memcpy(data, custom_report_descriptor_1,
-                   sizeof(custom_report_descriptor_1));
+  if (data[7] == 0x01) {
 
-  return sizeof(custom_report_descriptor_1);
+    __builtin_memcpy(data, custom_report_descriptor_1,
+                     sizeof(custom_report_descriptor_1));
+
+    return sizeof(custom_report_descriptor_1);
+  } else {
+    __builtin_memcpy(data, custom_report_descriptor_2,
+                     sizeof(custom_report_descriptor_2));
+
+    return sizeof(custom_report_descriptor_2);
+  }
 }
 
 HID_BPF_OPS(velocityone_flight) = {
