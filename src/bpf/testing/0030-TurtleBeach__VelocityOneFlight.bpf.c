@@ -118,6 +118,20 @@ static const __u8 custom_report_descriptor_1[] = {
       Input(Const|Arr|Abs)
     )
 
+    ReportId(3)
+
+    UsagePage_LED
+    Usage_LED_RGBLED
+    CollectionPhysical(
+      ReportSize(8)
+      ReportCount(63)
+      PhysicalMinimum_i8(0)
+      PhysicalMaximum_i16(255)
+      LogicalMinimum_i8(0)
+      LogicalMaximum_i16(100)
+      Usage_LED_RedLEDChannel
+    )
+
     FixedSizeVendorReport(64)
   )
 };
